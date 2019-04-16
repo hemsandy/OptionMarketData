@@ -27,6 +27,7 @@ public class Stock {
 
     public void update(double delta2) {
         this.delta = delta2;
+        price = price + delta2;
         lastUpdate=LocalDateTime.now();
     }
 
