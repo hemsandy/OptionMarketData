@@ -8,10 +8,40 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
-            <value>publisher.properties</value>
+            <value>properties/publisher.properties</value>
+        </property>
+    </bean>
+
+    <bean id="marketDataStore" class="com.wellsfargo.cmt.store.MarketDataStore" >
+        <constructor-arg index="0" value="${store.data.stocks.file}" />
+        <constructor-arg index="1" value="${store.update.delay.millis}" />
+    </bean>
+
+
+    <bean id="jmsPublisher" class="com.wellsfargo.cmt.publisher.JMSMarketDataPublisher" >
+        <constructor-arg index="0" ref="activeMQJmsTemplate" />
+        <constructor-arg index="1" ref="priceTickerDestination" />
+    </bean>
+
+    <!--  JMS Connection Details -->
+
+    <!-- a pooling based JMS provider -->
+
+    <bean id="jmsActiveMQFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>${publisher.jms.broker.url}</value>
         </property>
     </bean>
 
 
-
+    <!-- Spring JMS Template -->
+    <bean id="activeMQJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsActiveMQFactory" />
+        <property name="defaultDestination" ref="priceTickerDestination" />
+    </bean>
+    <!-- Destination -->
+    <bean id="priceTickerDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- name of the queue -->
+        <constructor-arg index="0" value="${publisher.jms.priceTicker.queue}" />
+    </bean>
 </beans>

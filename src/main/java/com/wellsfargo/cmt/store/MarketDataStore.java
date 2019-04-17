@@ -1,11 +1,9 @@
 package com.wellsfargo.cmt.store;
 
 import com.wellsfargo.cmt.model.Stock;
+import com.wellsfargo.cmt.util.CSVReader;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,15 +15,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MarketDataStore extends Observable implements Runnable{
 
-    long delay;
+    protected long delay;
+    protected String storeFile;
 
     Map<String, Stock> stockStoreMap = new ConcurrentHashMap<String, Stock>();
 
     double[] updateValues = {0.01, 0.02, -0.01, -0.02, 0.03, -0.03, 0.00,  0.04, -0.04, 0.1};
     Random random = new Random(10);
 
-    public MarketDataStore(long delaySeconds) {
-        this.delay = delaySeconds;
+    public MarketDataStore(String storeFile, long delayMillis) {
+        this.storeFile = storeFile;
+        this.delay = delayMillis;
     }
 
     /**
@@ -56,12 +56,32 @@ public class MarketDataStore extends Observable implements Runnable{
      * Observers for each <code>delay</code> ms
      */
     public void run() {
+        loadStocks();
+
         while(true) {
             updateStocks();
             setChanged();
             notifyObservers();
             try { Thread.sleep(delay); }
             catch(InterruptedException ie) {}
+        }
+    }
+
+    private void loadStocks() {
+        try {
+            List<List<String>> storeContents = CSVReader.readCSVFile(storeFile);
+            if(storeContents != null && !storeContents.isEmpty()) {
+                Iterator<List<String>> listIterator = storeContents.listIterator();
+                while(listIterator.hasNext()) {
+                    List<String> line = listIterator.next();
+                    String tmpSbl = line.get(0);
+                    double tmpPrc = Double.parseDouble(line.get(1));
+
+                    addStock(new Stock(tmpSbl,tmpPrc));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
