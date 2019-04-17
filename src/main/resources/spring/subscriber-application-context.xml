@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>properties/subscriber.properties</value>
+        </property>
+    </bean>
+
+    <bean id="desitnationResolver" class="org.springframework.jms.support.destination.DynamicDestinationResolver" />
+
+    <!--  JMS Connection Details -->
+    <bean id="stockMessageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="connectionFactory" ref="jmsActiveMQFactory" />
+        <property name="destination" ref="priceTickerDestination"/>
+        <property name="messageListener" ref="stockPriceListener" />
+        <property name="concurrentConsumers" value="${subscriber.concurrency}" />
+        <property name="destinationResolver" ref="desitnationResolver" />
+        <property name="sessionAcknowledgeMode" value="2" />
+    </bean>
+
+    <!-- a pooling based JMS provider -->
+
+    <bean id="jmsActiveMQFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>${subscriber.jms.url}</value>
+        </property>
+    </bean>
+
+    <!-- Destination -->
+    <bean id="priceTickerDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- name of the queue -->
+        <constructor-arg index="0" value="${subscriber.jms.priceTicker.queue}" />
+    </bean>
+
+    <bean id="stockPriceListener" class="com.wellsfargo.cmt.listener.StockPriceListener" />
+</beans>

@@ -1,10 +1,10 @@
 package com.wellsfargo.cmt.model;
 
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import java.io.StringReader;
+import com.google.gson.*;
+import org.springframework.cglib.core.Local;
+
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -23,7 +23,22 @@ public class Stock {
     public double delta;
     public LocalDateTime lastUpdate;
 
-    public static DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+    public static DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss SSS");
+
+    public static Gson gson  = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>(){
+
+                public JsonElement serialize(LocalDateTime localDateTime, Type typeOfSrc,
+                                             JsonSerializationContext context) {
+                    return new JsonPrimitive(formatter.format(localDateTime));
+                }
+            }).registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                public LocalDateTime deserialize(JsonElement json, Type typeOfT,
+                                                 JsonDeserializationContext context) throws JsonParseException {
+                    LocalDateTime dt = LocalDateTime.parse(json.getAsString(),formatter);
+                    return dt;
+                }
+            }).create();
 
     public void update(double delta2) {
         this.delta = delta2;
@@ -43,30 +58,14 @@ public class Stock {
     }
 
     public String toJSONString() {
-        JsonObject result = Json.createObjectBuilder()
-                .add("symbol", symbol)
-                .add("price", price)
-                .add("delta", delta)
-                .add("lastUpdate",lastUpdate.format(formatter))
-                .build();
 
-        return result.toString();
+        return gson.toJson(this);
     }
     public static Stock fromJsonString(String jsonObjectStr) {
         Stock stock = null;
         try {
+            gson.fromJson(jsonObjectStr, Stock.class);
 
-            JsonReader jsonReader = Json.createReader(new StringReader(jsonObjectStr));
-            JsonObject object = jsonReader.readObject();
-            jsonReader.close();
-
-            String smb = object.getString("symbol");
-            double pric = object.getJsonNumber("price").doubleValue();
-            double delta = object.getJsonNumber("delta").doubleValue();
-            LocalDateTime dateTime = LocalDateTime.parse(object.getString("lastUpdate"), formatter);
-            stock = new Stock(smb,pric);
-            stock.delta = delta;
-            stock.lastUpdate = dateTime;
         }catch(Exception e) {
             System.out.println("Parse Exception :" + e.getMessage() + "forMessage:" + jsonObjectStr);
         }

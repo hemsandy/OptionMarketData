@@ -28,6 +28,10 @@ public class MarketDataServiceMain {
                 Thread storeStart = new Thread(marketDataStore);
                 storeStart.start();
             }
+            if("SUBSCRIBER".equalsIgnoreCase(service)) {
+                ApplicationContext applicationContext = new ClassPathXmlApplicationContext("spring/subscriber-application-context.xml");
+
+            }
 
         }else{
             System.out.println("Please Provide Input Arguments: [BROKER/PUBLISHER/BOTH]");
