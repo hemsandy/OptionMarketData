@@ -23,9 +23,10 @@ public class MarketDataStore extends Observable implements Runnable{
     double[] updateValues = {0.01, 0.02, -0.01, -0.02, 0.03, -0.03, 0.00,  0.04, -0.04, 0.1};
     Random random = new Random(10);
 
-    public MarketDataStore(String storeFile, long delayMillis) {
+    public MarketDataStore(String storeFile, long delayMillis, Observer observer) {
         this.storeFile = storeFile;
         this.delay = delayMillis;
+        addObserver(observer);
     }
 
     /**
@@ -57,7 +58,6 @@ public class MarketDataStore extends Observable implements Runnable{
      */
     public void run() {
         loadStocks();
-
         while(true) {
             updateStocks();
             setChanged();

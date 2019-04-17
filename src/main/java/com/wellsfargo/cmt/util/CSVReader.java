@@ -17,7 +17,7 @@ public class CSVReader {
     public static List<List<String>> readCSVFile(String csvFile) throws Exception {
         List<List<String>> fileContents = new ArrayList<List<String>>();
         ClassLoader classLoader = CSVReader.class.getClassLoader();
-        Scanner  scanner = new Scanner(classLoader.getResource(csvFile).getFile());
+        Scanner  scanner = new Scanner(new File(classLoader.getResource(csvFile).getFile()));
         //Scanner  scanner = new Scanner(new File(csvFile));
         while (scanner.hasNext()) {
             List<String> line = parseLine(scanner.nextLine());
