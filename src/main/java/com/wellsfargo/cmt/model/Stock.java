@@ -64,7 +64,7 @@ public class Stock {
     public static Stock fromJsonString(String jsonObjectStr) {
         Stock stock = null;
         try {
-            gson.fromJson(jsonObjectStr, Stock.class);
+            stock = gson.fromJson(jsonObjectStr, Stock.class);
 
         }catch(Exception e) {
             System.out.println("Parse Exception :" + e.getMessage() + "forMessage:" + jsonObjectStr);
