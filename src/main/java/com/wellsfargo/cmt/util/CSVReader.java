@@ -1,6 +1,6 @@
 package com.wellsfargo.cmt.util;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,15 +17,18 @@ public class CSVReader {
     public static List<List<String>> readCSVFile(String csvFile) throws Exception {
         List<List<String>> fileContents = new ArrayList<List<String>>();
         ClassLoader classLoader = CSVReader.class.getClassLoader();
-        Scanner  scanner = new Scanner(new File(classLoader.getResource(csvFile).getFile()));
+        //Scanner  scanner = new Scanner(new File(classLoader.getResource(csvFile).getFile()));
         //Scanner  scanner = new Scanner(new File(csvFile));
-        while (scanner.hasNext()) {
-            List<String> line = parseLine(scanner.nextLine());
+        BufferedReader inputReader = new BufferedReader(
+                new InputStreamReader(classLoader.getResourceAsStream(csvFile)));
+        String tmpLine = null;
+        while ((tmpLine =inputReader.readLine()) != null) {
+            List<String> line = parseLine(tmpLine);
             if(line != null && !line.isEmpty()) {
                 fileContents.add(line);
             }
         }
-        scanner.close();
+        inputReader.close();
         return fileContents;
     }
 

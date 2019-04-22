@@ -23,7 +23,7 @@ public abstract class MarketDataPublisher implements Observer {
      * @param arg
      */
     public void update(Observable observableObj, Object arg) {
-        System.out.println("received event..");
+        //System.out.println("received event..");
         MarketDataStore store = (MarketDataStore)observableObj;
         Map<String, Stock> stockMap = store.getStockStoreMap();
         //Iterate and Publish to Queue/Topic
