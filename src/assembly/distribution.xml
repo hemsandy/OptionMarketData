@@ -7,15 +7,16 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
-        <fileSet>
-            <directory>${basedir}/src/main/resources</directory>
-            <outputDirectory>/</outputDirectory>
-            <includes>
-                <include>properties/*.properties</include>
-                <include>properties/*.csv</include>
-                <include>spring/*.xml</include>
-            </includes>
-        </fileSet>
+       <fileSet>
+           <directory>${basedir}/src/main/resources</directory>
+           <outputDirectory>/</outputDirectory>
+           <includes>
+               <include>properties/*.properties</include>
+               <include>properties/*.csv</include>
+               <include>spring/*.xml</include>
+           </includes>
+       </fileSet>
+
         <fileSet>
             <directory>${basedir}/src/main/resources/scripts/</directory>
             <outputDirectory>/</outputDirectory>
@@ -24,6 +25,7 @@
             </includes>
         </fileSet>
     </fileSets>
+
     <dependencySets>
         <dependencySet>
             <outputDirectory>/</outputDirectory>

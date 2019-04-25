@@ -4,4 +4,4 @@
 # possible arguments to the program BROKER/PUBLISHER/BOTH/SUBSCRIBER
 #BOTH starts BROKER and PUBLISHER
 #SUBSCRIBER starts a dummy subscriber and consumes all messages
-java -cp ./*:./lib/*:resources/* com.wellsfargo.cmt.MarketDataServiceMain BOTH
+java -cp ./lib/*:./*:. com.wellsfargo.cmt.MarketDataServiceMain BOTH
