@@ -23,7 +23,7 @@ public class Stock {
     public double delta;
     public LocalDateTime lastUpdate;
 
-    public static DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss SSS");
+    public static DateTimeFormatter formatter =  DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss SSS");
 
     public static Gson gson  = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>(){
