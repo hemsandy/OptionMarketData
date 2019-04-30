@@ -37,6 +37,24 @@
         <!-- name of the queue -->
         <constructor-arg index="0" value="${subscriber.jms.priceTicker.queue}" />
     </bean>
+    <bean id="pricedOptionsDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!-- name of the queue -->
+        <constructor-arg index="0" value="${subscriber.jms.priced.options.topic}" />
+    </bean>
+
 
     <bean id="stockPriceListener" class="com.wellsfargo.cmt.listener.StockPriceListener" />
+
+    <!--  JMS Connection Details -->
+    <bean id="pricedOptionMessageListenerContainer" class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="connectionFactory" ref="jmsActiveMQFactory" />
+        <property name="destination" ref="pricedOptionsDestination"/>
+        <property name="messageListener" ref="pricedOptionsListener" />
+        <property name="concurrentConsumers" value="${subscriber.concurrency}" />
+        <property name="destinationResolver" ref="desitnationResolver" />
+        <property name="sessionAcknowledgeMode" value="2" />
+    </bean>
+
+    <bean id="pricedOptionsListener" class="com.wellsfargo.cmt.listener.StockPriceListener" />
+
 </beans>
